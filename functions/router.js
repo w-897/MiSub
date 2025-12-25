@@ -17,10 +17,10 @@ import { DataMigrator, StorageFactory } from './storage-adapter.js';
  */
 export async function handleApiRequest(request, env) {
     const url = new URL(request.url);
-    const path = url.pathname.replace(/^\/api/, '');
+    const path = url.pathname.replace(/^\/api\//, '/').replace(/^\//, '');
 
     // 数据迁移接口
-    if (path === '/migrate_to_d1') {
+    if (path === 'migrate_to_d1') {
         const authResult = await requireAuth(request, env);
         if (authResult) return authResult;
 
@@ -59,7 +59,7 @@ export async function handleApiRequest(request, env) {
     }
 
     // 向后兼容迁移接口
-    if (path === '/migrate') {
+    if (path === 'migrate') {
         const authResult = await requireAuth(request, env);
         if (authResult) return authResult;
 
@@ -86,12 +86,12 @@ export async function handleApiRequest(request, env) {
     }
 
     // 登录接口 - 不需要认证
-    if (path === '/login') {
+    if (path === 'login') {
         return await handleLogin(request, env);
     }
 
     // 数据接口 - 特殊处理认证，避免返回401导致控制台报错
-    if (path === '/data') {
+    if (path === 'data') {
         const authResult = await requireAuth(request, env);
         if (authResult) {
             // 如果认证失败，返回200 OK但带有authenticated: false标记
@@ -109,16 +109,16 @@ export async function handleApiRequest(request, env) {
     if (authResult) return authResult;
 
     switch (path) {
-        case '/logout':
+        case 'logout':
             return await handleLogout(request);
 
-        case '/misubs':
+        case 'misubs':
             return await handleMisubsSave(request, env);
 
-        case '/settings':
+        case 'settings':
             return await handleSettingsRequest(request, env);
 
-        case '/node-groups':
+        case 'node-groups':
             return await handleNodeGroupsRequest(request, env);
 
         default:
